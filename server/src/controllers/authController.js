@@ -31,7 +31,35 @@ const loginSchema = Joi.object({
 
 // TODO: implement login function
 export async function login(req, res, next) {
+
+  const user ={
+    email : req.body.email,
+    password : req.body.password
+  }
+console.log(user.email)
+console.log(user.password)
+//const user = await User.create({ name: nameGiven, email: emailFound, password : passGiven });
+  const existing = await User.findOne({ email: user.email });
+  console.log(existing)
+    if (existing) {
+      const isSame = await bcrypt.compare(user.password, existing.passwordHash);
+
+      if (isSame){
+
+   const token = signToken(existing);
+    res.status(201).json({ token, user: publicUser(existing) });
+   }
+      
+    }
+
+//const user = await User.create({ name: nameGiven, email: emailFound, password : passGiven });
+
  
+ 
+
+ else {
+  console.log("IMPOSTERRRRRR!!!");
+ }
 }
 
 export async function me(req, res) {
